@@ -5,17 +5,17 @@ class SupervisorCache {
 	private supervisorsMap: Map<number, Promise<Supervisor | null>> = new Map();
 
 	public async getSupervisors(contactIds: number[]): Promise<Supervisor[]> {
-		const notFoundInCacheIds: number[] = contactIds.filter((contactId) => {
+		const idsToFetch: number[] = contactIds.filter((contactId) => {
 			return !this.supervisorsMap.has(contactId);
 		});
 
-		if (notFoundInCacheIds.length > 0) {
-			const getMultiplePromise = supervisorService.getSupervirors(notFoundInCacheIds);
-			this.populateCache(notFoundInCacheIds, getMultiplePromise);
-			await getMultiplePromise;
+		if (idsToFetch.length > 0) {
+			const getSupervisorsPromise = supervisorService.getSupervirors(idsToFetch);
+			this.initializeSupervisorsMap(idsToFetch, getSupervisorsPromise);
+			await getSupervisorsPromise;
 		}
 
-		const entriesPromise = this.getEntriesFromPromiseMap(contactIds);
+		const entriesPromise = this.getEntriesFromSupervisorsMap(contactIds);
 
 		const results = Promise.allSettled(entriesPromise)
 			.then((settledPromises) =>
@@ -30,12 +30,12 @@ class SupervisorCache {
 		return results as Promise<Supervisor[]>;
 	}
 
-	private populateCache(notFoundInCacheIds: number[], getMultiplePromise: Promise<SupervisorMapEntry[]>) {
-		notFoundInCacheIds.forEach((contactId) => {
+	private initializeSupervisorsMap(idsToFetch: number[], getSupervisorsPromise: Promise<SupervisorMapEntry[]>) {
+		idsToFetch.forEach((contactId) => {
 			this.supervisorsMap.set(
 				contactId,
 				new Promise<Supervisor | null>((resolve, reject) => {
-					getMultiplePromise
+					getSupervisorsPromise
 						.then((supervisorMapEntryArray) => {
 							const supervisorMapEntry = supervisorMapEntryArray.find(
 								(supervisorMapEntry) => contactId === supervisorMapEntry.contactId
@@ -54,7 +54,7 @@ class SupervisorCache {
 		});
 	}
 
-	private getEntriesFromPromiseMap(contactIds: number[]): Promise<Supervisor | null>[] {
+	private getEntriesFromSupervisorsMap(contactIds: number[]): Promise<Supervisor | null>[] {
 		const result: Promise<Supervisor | null>[] = [];
 		contactIds.forEach((contactId) => {
 			const cachedEntry = this.supervisorsMap.get(contactId);
