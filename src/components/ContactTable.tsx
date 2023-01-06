@@ -10,7 +10,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import contactService from "../services/ContactService";
-import supervisorCache from "../services/SupervisorCache";
+import supervisorCache from "../services/ServicesFactory";
 
 // using the docs in https://mui.com/material-ui/react-list/ and https://mui.com/material-ui/api/list/
 // https://mui.com/material-ui/react-table/

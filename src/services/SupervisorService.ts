@@ -3,8 +3,8 @@ import { supervisors } from "./FakeData";
 
 const FAKE_DELAY_MS = 1500;
 
-class SupervisorService {
-	public async getSupervirors(contactIds: number[]): Promise<SupervisorMapEntry[]> {
+export class SupervisorService {
+	public async getSupervisors(contactIds: number[]): Promise<SupervisorMapEntry[]> {
 		function retrieveSupervisors() {
 			const supervisorsArray: SupervisorMapEntry[] = [];
 
@@ -23,7 +23,3 @@ class SupervisorService {
 		});
 	}
 }
-
-const supervisorService = new SupervisorService();
-
-export default supervisorService;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import supervisorCache from "../services/SupervisorCache";
+import supervisorCache from "../services/ServicesFactory";
 import { Supervisor } from "../models/Supervisor";
 import { Skeleton } from "@mui/material";
 
@@ -14,10 +14,7 @@ export function ContactSupervisor(props: Props) {
 		async function fetchData() {
 			try {
 				const supervisor = await supervisorCache.getSupervisor(props.contactId);
-
-				if (supervisor !== undefined) {
-					setSupervisor(supervisor);
-				}
+				setSupervisor(supervisor);
 			} catch (error) {
 				console.log(`ContactSupervisor - An error occurred: ${error}`);
 				setSupervisor(null);
